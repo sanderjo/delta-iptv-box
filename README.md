@@ -39,11 +39,47 @@ opvraagbaar: naam, model, netwerkverbinding, firmware, uptime en taal.
 Met de meegeleverde wrapper (maakt zo nodig zelf een `.venv` aan):
 
 ```bash
-./run.sh                 # automatisch zoeken + uitlezen
+./run.sh                 # Delta-box automatisch zoeken + uitlezen
 ./run.sh 192.168.1.172   # direct een bekend IP
+./run.sh --scan          # heel het LAN scannen naar set-top boxes
 ./run.sh --json          # ook de volledige JSON
 ./run.sh --raw           # alleen de kale JSON (handig voor pipes)
 ```
+
+### LAN-scan naar set-top boxes (`--scan`)
+
+Scant het hele /24-subnet en classificeert set-top boxes op basis van
+**MAC-OUI** en **poort-fingerprint** — ook boxen die zichzelf niet via mDNS
+bekendmaken (zoals de Amino):
+
+| Type | Herkend aan |
+|---|---|
+| **Amino Aria 7x** | Entone-OUI `00:03:E6` en/of dropbear-SSH op poort 10022 met HTTP-control op 56789/56790 |
+| **Delta Smart-box / Cast** | open Chromecast-poort 8008 met leesbaar `eureka_info` |
+
+Voorbeelduitvoer:
+
+```
+=== LAN-scan naar IPTV set-top boxes ===
+Subnet: 192.168.1.0/24
+
+[3] 192.168.1.172  ->  Delta Smart-box   (zekerheid: hoog)
+    MAC          : 98:c9:be:67:d3:b5  (Shenzhen SDMC Technology)
+    Open poorten : 8008, 8009
+    Cast-model   : SDMC DFN-Amigo7N
+    Cast-firmware: 3.72.446070  (ethernet)
+
+[4] 192.168.1.249  ->  Amino Aria 7x   (zekerheid: hoog)
+    MAC          : 00:03:e6:c3:ec:b2  (Entone)
+    Open poorten : 10022, 56789, 56790
+    SSH-banner   : SSH-2.0-dropbear_2022.83
+```
+
+Een vast subnet kiezen (sla auto-detectie over): `./run.sh --scan --subnet 192.168.1`.
+
+> De Amino Aria 7x (Entone-platform) maakt zichzelf niet bekend via mDNS/SSDP
+> en heeft geen open statusendpoint. Classificatie gebeurt daarom puur op
+> MAC-OUI + poort-fingerprint, niet op een modelnaam die de box zelf uitzendt.
 
 Of rechtstreeks met Python:
 
