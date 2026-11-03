@@ -39,14 +39,19 @@ opvraagbaar: naam, model, netwerkverbinding, firmware, uptime en taal.
 Met de meegeleverde wrapper (maakt zo nodig zelf een `.venv` aan):
 
 ```bash
-./run.sh                 # Delta-box automatisch zoeken + uitlezen
-./run.sh 192.168.1.172   # direct een bekend IP
-./run.sh --scan          # heel het LAN scannen naar set-top boxes
+./run.sh                 # LAN scannen naar set-top boxes (default)
+./run.sh 192.168.1.172   # direct een bekend IP uitlezen (Cast/eureka_info)
+./run.sh --delta         # alleen de Delta-box via mDNS zoeken + uitlezen
 ./run.sh --json          # ook de volledige JSON
 ./run.sh --raw           # alleen de kale JSON (handig voor pipes)
 ```
 
-### LAN-scan naar set-top boxes (`--scan`)
+> **Default = LAN-scan.** Zonder argumenten scant het script het hele subnet
+> naar set-top boxes. De Amino maakt zichzelf niet via mDNS bekend, dus de
+> scan is de enige manier om hem automatisch te vinden. `--delta` doet de oude
+> mDNS-only modus (alleen de Delta-box).
+
+### LAN-scan naar set-top boxes (default)
 
 Scant het hele /24-subnet en classificeert set-top boxes op basis van
 **MAC-OUI** en **poort-fingerprint** — ook boxen die zichzelf niet via mDNS

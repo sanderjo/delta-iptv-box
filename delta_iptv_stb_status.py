@@ -301,17 +301,23 @@ def print_status(ip, info):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Vind IPTV set-top boxes en lees de status uit.")
-    ap.add_argument("ip", nargs="?", help="IP van de Delta-box (overslaat discovery)")
+    ap = argparse.ArgumentParser(
+        description="Vind IPTV set-top boxes en lees de status uit. "
+                    "Zonder argumenten scant hij het hele LAN naar set-top boxes."
+    )
+    ap.add_argument("ip", nargs="?", help="lees direct dit IP uit (Chromecast/eureka_info)")
     ap.add_argument("--scan", action="store_true",
-                    help="scan het hele LAN naar set-top boxes (Amino/Entone + Delta/Cast)")
+                    help="scan het hele LAN naar set-top boxes (default als geen IP/--delta)")
     ap.add_argument("--subnet", help="te scannen /24-prefix bij --scan, bv 192.168.1 (default: auto)")
+    ap.add_argument("--delta", action="store_true",
+                    help="alleen de Delta-box via mDNS zoeken en uitlezen (oude default)")
     ap.add_argument("--json", action="store_true", help="toon ook de volledige JSON")
     ap.add_argument("--raw", action="store_true", help="toon alleen de kale JSON")
     ap.add_argument("--timeout", type=float, default=8.0, help="discovery-timeout in seconden")
     args = ap.parse_args()
 
-    if args.scan:
+    # Default = LAN-scan. Alleen een los IP of --delta leest één box uit.
+    if args.scan or (not args.ip and not args.delta):
         prefix = args.subnet or local_prefix()[1]
         if not args.raw:
             print(f"LAN-scan op {prefix}.0/24 ... (even geduld)", file=sys.stderr)
@@ -323,12 +329,12 @@ def main():
         return
 
     ip = args.ip
-    if not ip:
+    if not ip:  # --delta: Delta-box via mDNS zoeken
         if not args.raw:
             print("Zoeken naar de Delta TV-box via mDNS ...", file=sys.stderr)
         res = discover(timeout=args.timeout)
         if not res:
-            print("Geen Delta-box gevonden. Geef het IP handmatig mee.", file=sys.stderr)
+            print("Geen Delta-box gevonden. Geef het IP handmatig mee of gebruik --scan.", file=sys.stderr)
             sys.exit(1)
         ip, name, model = res
         if not args.raw:
