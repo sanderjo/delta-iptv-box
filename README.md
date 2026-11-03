@@ -1,7 +1,7 @@
 # delta-iptv-box
 
-Vind de **Delta IPTV set-top box** (SDMC **DFN-Amigo7N**, "DELTA Smart-box") op je
-lokale netwerk en lees de status uit — zonder inloggen.
+Vind de **Delta IPTV set-top box** (SDMC **DFN-Amigo7N**, "DELTA Smart-box",
+Model Number: **DV9651**) op je lokale netwerk en lees de status uit — zonder inloggen.
 
 De box is een Android TV / IPTV-ontvanger met ingebouwde Chromecast. Via de
 Chromecast-`eureka_info`-API (poort 8443/8008) is apparaatinformatie openbaar
